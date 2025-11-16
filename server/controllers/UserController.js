@@ -55,6 +55,7 @@ export const updateUserData = async (req, res) => {
             const buffer = fs.readFileSync(profile.path)
             const response = await imagekit.upload({
                 file: buffer,
+                // fileName: profile.originalname,
                 fileName: profile.originalname,
             })
 
@@ -75,7 +76,7 @@ export const updateUserData = async (req, res) => {
             const buffer = fs.readFileSync(cover.path)
             const response = await imagekit.upload({
                 file: buffer,
-                fileName: profile.originalname,
+                fileName: cover.originalname,
             })
 
             const url = imagekit.url({
@@ -319,7 +320,3 @@ export const getUserProfiles = async(req, res) => {
         res.json({success: false, message: error.message});
     }
 }
-
-
-
-
