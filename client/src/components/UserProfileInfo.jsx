@@ -79,7 +79,7 @@ const UserProfileInfo = ({ user, posts, profileId, setShowEdit }) => {
       <div className="upi-wrap">
       
         <div className="upi-avatar-ring">
-          <img src={user.profile__picture} alt="avatar" />
+          <img src={user.profile_picture} alt="avatar" />
         </div>
 
         <div className="upi-body">

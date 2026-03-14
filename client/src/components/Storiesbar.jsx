@@ -144,7 +144,7 @@ const Storiesbar = () => {
        
           {stories.map((story, i) => (
             <div key={i} className="story-card" onClick={() => setViewStory(story)}>
-              <img src={story.user.profile__picture} alt="user" className="story-avatar" />
+              <img src={story.user.profile_picture} alt="user" className="story-avatar" />
 
               {story.media_type !== 'text' && (
                 <div className="story-media">

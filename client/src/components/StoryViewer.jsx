@@ -118,7 +118,7 @@ const StoryViewer = ({ viewStory, setViewStory }) => {
 
       
         <div className="sv-user">
-          <img src={viewStory.user?.profile__picture} alt="user" className="sv-avatar" />
+          <img src={viewStory.user?.profile_picture} alt="user" className="sv-avatar" />
           <span className="sv-name">
             {viewStory.user?.full_name}
             <BadgeCheck size={14} style={{ color: '#38BDF8' }} />

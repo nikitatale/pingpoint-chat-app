@@ -188,7 +188,7 @@ const Connections = () => {
             ) : (
               activeData.map((user) => (
                 <div key={user._id} className="conn-user-card">
-                  <img src={user.profile__picture} alt="avatar" className="conn-avatar" />
+                  <img src={user.profile_picture} alt="avatar" className="conn-avatar" />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p className="conn-user-name">{user.full_name}</p>
                     <p className="conn-user-handle">@{user.username}</p>

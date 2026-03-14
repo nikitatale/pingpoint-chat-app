@@ -117,7 +117,7 @@ const RecentMessages = () => {
           ) : (
             messages.map((msg, i) => (
               <Link to={`/messages/${msg.from_user_id._id}`} key={i} className="rm-item">
-                <img src={msg.from_user_id.profile__picture} alt="avatar" className="rm-avatar" />
+                <img src={msg.from_user_id.profile_picture} alt="avatar" className="rm-avatar" />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span className="rm-name">{msg.from_user_id.full_name}</span>

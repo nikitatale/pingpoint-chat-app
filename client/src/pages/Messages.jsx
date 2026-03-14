@@ -74,7 +74,7 @@ const Messages = () => {
             ) : (
               connections.map((user) => (
                 <div key={user._id} className="msg-card">
-                  <img src={user.profile__picture} alt="avatar" className="msg-avatar" />
+                  <img src={user.profile_picture} alt="avatar" className="msg-avatar" />
                   <div className="msg-info">
                     <p className="msg-name">{user.full_name}</p>
                     <p className="msg-handle">@{user.username}</p>

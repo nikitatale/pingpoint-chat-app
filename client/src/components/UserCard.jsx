@@ -118,7 +118,7 @@ const UserCard = ({ user }) => {
       `}</style>
 
       <div className="user-card">
-        <img src={user.profile__picture} alt="avatar" className="uc-avatar" />
+        <img src={user.profile_picture} alt="avatar" className="uc-avatar" />
         <p className="uc-name">{user.full_name}</p>
         {user.username && <p className="uc-username">@{user.username}</p>}
         {user.bio && <p className="uc-bio">{user.bio}</p>}

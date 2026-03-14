@@ -127,7 +127,7 @@ const PostCard = ({ post }) => {
       <div className="post-card">
       
         <div className="post-user-row" onClick={() => navigate(`/profile/${post.user._id}`)}>
-          <img src={post.user.profile__picture} alt="avatar" className="post-avatar" />
+          <img src={post.user.profile_picture} alt="avatar" className="post-avatar" />
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
               <span className="post-username">{post.user.full_name}</span>

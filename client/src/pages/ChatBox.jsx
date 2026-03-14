@@ -199,7 +199,7 @@ const ChatBox = () => {
       <div className="chatbox-wrap">
      
         <div className="chat-header">
-          <img src={user.profile__picture} alt="avatar" className="chat-header-avatar" />
+          <img src={user.profile_picture} alt="avatar" className="chat-header-avatar" />
           <div>
             <p className="chat-header-name">{user.full_name}</p>
             <p className="chat-header-handle">@{user.username}</p>
