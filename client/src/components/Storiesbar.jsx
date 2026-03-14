@@ -1,93 +1,171 @@
 import React, { useEffect, useState } from 'react'
-import { Plus } from 'lucide-react';
-import moment from 'moment';
-import StoryModel from './StoryModel';
-import StoryViewer from './StoryViewer';
-import { useAuth } from '@clerk/clerk-react';
-import api from '../api/axios';
-import toast from 'react-hot-toast';
+import { Plus } from 'lucide-react'
+import moment from 'moment'
+import StoryModel from './StoryModel'
+import StoryViewer from './StoryViewer'
+import { useAuth } from '@clerk/clerk-react'
+import api from '../api/axios'
+import toast from 'react-hot-toast'
 
 const Storiesbar = () => {
+  const { getToken } = useAuth()
+  const [stories, setStories] = useState([])
+  const [showModel, setShowModel] = useState(false)
+  const [viewStory, setViewStory] = useState(null)
 
-    const {getToken } = useAuth();
-  
-    const[stories, setStories] = useState([]);
-    const[showModel, setShowModel] = useState(false);
-    const[viewStory, setViewStory] = useState(null);
-
-    const fetchStories = async () => {
-       try {
-        const token = await getToken()
-        const { data } = await api('/api/story/get', {
-            headers: {Authorization: `Bearer ${token}`}
-        })
-
-
-        if(data.success){
-            setStories(data.stories)
-
-        } else {
-            toast(data.message)
-        }
-       } catch (error) {
-         toast.error(error.message)
-       }
-    
+  const fetchStories = async () => {
+    try {
+      const token = await getToken()
+      const { data } = await api('/api/story/get', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (data.success) setStories(data.stories)
+      else toast(data.message)
+    } catch (error) {
+      toast.error(error.message)
     }
+  }
 
-    useEffect(() => {
-        fetchStories();
-    }, [])
+  useEffect(() => { fetchStories() }, [])
 
   return (
-    <div className='w-screen sm:w-[calc(100vw-240px)] lg:max-w-2xl no-scrollbar overflow-x-auto px-4'>
-        <div className='flex gap-4 pb-5'>
-            <div onClick={() => setShowModel(true)} className='rounded-lg shadow-sm min-w-30 max-w-30 max-h-40 aspect-[3/4] cursor-pointer hover:shadow-lg transition-all duration-200 border-2 border-dashed border-[#111B3D] bg-gradient-to-r from-indigo-50 to-white'>
-               <div className='h-full flex flex-col items-center justify-center p-4 '>
-                <div className='size-10 bg-[#111B3D] rounded-full flex items-center justify-center mb-3'>
-                    <Plus className='w-5 h-5 text-white'/>
-                </div>
-                <p className='text-sm font-medium text-slate-700 text-center '>Create Story</p>
-               </div>
+    <>
+      <style>{`
+        .stories-bar {
+          width: 100%;
+          overflow-x: auto;
+          padding-bottom: 4px;
+        }
+        .stories-bar::-webkit-scrollbar { height: 3px; }
+        .stories-bar::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 3px; }
+
+        .stories-track {
+          display: flex;
+          gap: 12px;
+          padding: 4px 2px 8px;
+          width: max-content;
+        }
+
+       
+        .story-create {
+          min-width: 100px; max-width: 100px;
+          aspect-ratio: 3/4;
+          border-radius: 14px;
+          border: 2px dashed rgba(99,102,241,0.4);
+          background: rgba(99,102,241,0.06);
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center;
+          gap: 10px; cursor: pointer;
+          transition: all 0.2s;
+          flex-shrink: 0;
+        }
+        .story-create:hover {
+          border-color: rgba(99,102,241,0.7);
+          background: rgba(99,102,241,0.12);
+          transform: translateY(-2px);
+        }
+        .story-create-icon {
+          width: 36px; height: 36px; border-radius: 50%;
+          background: linear-gradient(135deg, #4F46E5, #0EA5E9);
+          display: flex; align-items: center; justify-content: center;
+          box-shadow: 0 0 12px rgba(79,70,229,0.4);
+        }
+        .story-create-label {
+          font-size: 0.72rem; font-weight: 500; color: #64748B; text-align: center;
+        }
+
+       
+        .story-card {
+          position: relative;
+          min-width: 100px; max-width: 100px;
+          aspect-ratio: 3/4;
+          border-radius: 14px;
+          overflow: hidden;
+          cursor: pointer;
+          flex-shrink: 0;
+          background: linear-gradient(to bottom, #4F46E5, #1E293B);
+          border: 1px solid rgba(99,102,241,0.2);
+          transition: all 0.2s;
+        }
+        .story-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+        .story-card:active { transform: scale(0.96); }
+
+        .story-avatar {
+          position: absolute;
+          top: 8px; left: 8px; z-index: 10;
+          width: 30px; height: 30px;
+          border-radius: 50%;
+          border: 2px solid rgba(99,102,241,0.8);
+          object-fit: cover;
+          box-shadow: 0 0 8px rgba(79,70,229,0.5);
+        }
+        .story-media {
+          position: absolute; inset: 0; z-index: 1;
+          border-radius: 14px; overflow: hidden;
+        }
+        .story-media img,
+        .story-media video {
+          width: 100%; height: 100%; object-fit: cover;
+          opacity: 0.75; transition: opacity 0.2s;
+        }
+        .story-card:hover .story-media img,
+        .story-card:hover .story-media video { opacity: 0.9; }
+
+       
+        .story-fade {
+          position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
+          background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+          z-index: 2;
+        }
+        .story-time {
+          position: absolute; bottom: 6px; right: 8px;
+          font-size: 0.6rem; color: rgba(255,255,255,0.7);
+          z-index: 3;
+        }
+        .story-text-preview {
+          position: absolute; bottom: 24px; left: 8px; right: 8px;
+          font-size: 0.65rem; color: rgba(255,255,255,0.5);
+          z-index: 3;
+          overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+      `}</style>
+
+      <div className="stories-bar">
+        <div className="stories-track">
+
+       
+          <div className="story-create" onClick={() => setShowModel(true)}>
+            <div className="story-create-icon">
+              <Plus style={{ width: 18, height: 18, color: 'white' }} />
             </div>
+            <span className="story-create-label">Create Story</span>
+          </div>
 
-            {
-                stories.map((story, index) => (
-                    <div onClick={() => setViewStory(story)} className={`relative rounded-lg shadow min-w-30 max-w-30 max-h-40 cursor-pointer hover:shadow-lg transition-all duration-200 bg-gradient-to-b from-[#6375b3]  to-[#1b2957]  hover:from-[#47568b] hover:to-[#162450] active:scale-95`} key={index} >
-                     <img src={story.user.profile__picture} alt="user" className='absolute size-8 top-3 left-3 z-10 rounded-full ring ring-gray-100 shadow'/>
-                     <p className='absolute top-18 left-3 text-white/16 text-sm truncate max-w-24 '>{story.content}</p>
-                     <p className='text-white absolute bottom-1 right-2 z-10 text-xs '>{moment(story.createdAt).fromNow()}</p>
-                      {
-                        story.media_type !== 'text' && (
-                            <div className='absolute inset-0 z-1 rounded-lg bg-black overflow-hidden'>
-                                   {
-                        story.media_type === "image" ? 
-                        <img src={story.media_url} alt="image" className='h-full w-full object-cover hover:scale-110 transition duration-500 opacity-70 hover:opacity-80' />
-                       :
-                       <video src={story.media_url} className='h-full w-full object-cover hover:scale-110 transition duration-500 opacity-70 hover:opacity-80' />
-                    }
-                            </div>
-                        )
-                      }
-                    
-                    </div>
-                ))
-            }
+       
+          {stories.map((story, i) => (
+            <div key={i} className="story-card" onClick={() => setViewStory(story)}>
+              <img src={story.user.profile__picture} alt="user" className="story-avatar" />
 
+              {story.media_type !== 'text' && (
+                <div className="story-media">
+                  {story.media_type === 'image'
+                    ? <img src={story.media_url} alt="story" />
+                    : <video src={story.media_url} />
+                  }
+                </div>
+              )}
 
+              <div className="story-fade" />
+              {story.content && <p className="story-text-preview">{story.content}</p>}
+              <p className="story-time">{moment(story.createdAt).fromNow()}</p>
+            </div>
+          ))}
         </div>
+      </div>
 
-        {/* Add story model */}
-        {
-        
-            showModel && <StoryModel setShowModel={setShowModel} fetchStories={fetchStories}/>
-        }
-
-        {
-            viewStory && <StoryViewer viewStory={viewStory} setViewStory={setViewStory}/>
-        }
-      
-    </div>
+      {showModel && <StoryModel setShowModel={setShowModel} fetchStories={fetchStories} />}
+      {viewStory && <StoryViewer viewStory={viewStory} setViewStory={setViewStory} />}
+    </>
   )
 }
 

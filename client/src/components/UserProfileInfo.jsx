@@ -2,65 +2,128 @@ import { Calendar, MapPin, PenBox, Verified } from 'lucide-react'
 import moment from 'moment'
 import React from 'react'
 
-const UserProfileInfo = ({user, posts, profileId, setShowEdit}) => {
+const UserProfileInfo = ({ user, posts, profileId, setShowEdit }) => {
   return (
-    <div className='relative py-4 px-6 md:px-8 bg-white'>
-        <div className='flex flex-col md:flex-row items-start gap-6'>
-          <div className='w-32 h-32 border-4 border-white shadow-lg absolute -top-16 rounded-full'>
-             <img src={user.profile__picture} alt="image" className='absolute rounded-full z-2' />
+    <>
+      <style>{`
+        .upi-wrap {
+          position: relative;
+          padding: 1rem 1.5rem 1.2rem;
+          background: transparent;
+        }
+        .upi-avatar-ring {
+          position: absolute;
+          top: -52px; left: 1.5rem;
+          width: 96px; height: 96px;
+          border-radius: 50%;
+          border: 3px solid #0B1425;
+          box-shadow: 0 0 0 2px rgba(99,102,241,0.5), 0 0 20px rgba(99,102,241,0.2);
+          overflow: hidden;
+          background: #1E293B;
+          z-index: 5;
+        }
+        .upi-avatar-ring img {
+          width: 100%; height: 100%;
+          object-fit: cover; border-radius: 50%;
+        }
+        .upi-body { padding-top: 3rem; }
+        .upi-top {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+        @media (min-width: 640px) {
+          .upi-top { flex-direction: row; align-items: flex-start; justify-content: space-between; }
+        }
+        .upi-name-row { display: flex; align-items: center; gap: 8px; }
+        .upi-name { font-size: 1.4rem; font-weight: 700; color: #F0F4FF; }
+        .upi-handle { font-size: 0.85rem; color: #475569; margin-top: 2px; }
+
+        .upi-edit-btn {
+          display: inline-flex; align-items: center; gap: 6px;
+          padding: 7px 16px;
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(99,102,241,0.25);
+          border-radius: 10px;
+          color: #94A3B8; font-size: 0.82rem; font-weight: 500;
+          cursor: pointer; transition: all 0.2s; font-family: inherit;
+          white-space: nowrap; flex-shrink: 0;
+        }
+        .upi-edit-btn:hover { background: rgba(99,102,241,0.12); border-color: rgba(99,102,241,0.4); color: #A5B4FC; }
+
+        .upi-bio { font-size: 0.88rem; color: #94A3B8; max-width: 480px; margin-top: 0.8rem; line-height: 1.6; }
+
+        .upi-meta {
+          display: flex; flex-wrap: wrap; gap: 12px;
+          margin-top: 0.8rem;
+        }
+        .upi-meta-item {
+          display: flex; align-items: center; gap: 5px;
+          font-size: 0.8rem; color: #475569;
+        }
+
+        .upi-stats {
+          display: flex; align-items: center; gap: 1.5rem;
+          margin-top: 1rem;
+          padding-top: 1rem;
+          border-top: 1px solid rgba(99,102,241,0.1);
+        }
+        .upi-stat-num { font-size: 1.1rem; font-weight: 700; color: #E2E8F0; }
+        .upi-stat-label { font-size: 0.75rem; color: #475569; margin-left: 4px; }
+      `}</style>
+
+      <div className="upi-wrap">
+     
+        <div className="upi-avatar-ring">
+          <img src={user.profile__picture} alt="avatar" />
+        </div>
+
+        <div className="upi-body">
+          <div className="upi-top">
+            <div>
+              <div className="upi-name-row">
+                <h1 className="upi-name">{user.full_name}</h1>
+                <Verified style={{ width: 20, height: 20, color: '#38BDF8' }} />
+              </div>
+              <p className="upi-handle">{user.username ? `@${user.username}` : 'Add a username'}</p>
+            </div>
+            {!profileId && (
+              <button className="upi-edit-btn" onClick={() => setShowEdit(true)}>
+                <PenBox style={{ width: 14, height: 14 }} /> Edit Profile
+              </button>
+            )}
           </div>
-          <div className='w-full pt-16 md:pt-0 md:pl-36'>
-            <div className='flex flex-col md:flex-row items-start justify-between'> 
-                  <div>
-                      <div className='flex items-center gap-3'>
-                         <h1 className='text-2xl font-bold text-gray-900'>{user.full_name}</h1>
-                         <Verified className='w-6 h-6 text-blue-500'/>
-                      </div> 
-                      <p className='text-gray-600'>{user.username ? `@${user.username}` : `Add a username`}</p>
-                  </div>
 
-                   {
-                    !profileId && <button onClick={() => setShowEdit(true)} className='flex  cursor-pointer items-center gap-2 border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg font-medium transition-colors mt-4 md:mt-0'><PenBox className='w-4 h-5'/>Edit</button>
-                   }
+          {user.bio && <p className="upi-bio">{user.bio}</p>}
+
+          <div className="upi-meta">
+            <span className="upi-meta-item">
+              <MapPin style={{ width: 14, height: 14, color: '#6366F1' }} />
+              {user.location || 'Add location'}
+            </span>
+            <span className="upi-meta-item">
+              <Calendar style={{ width: 14, height: 14, color: '#6366F1' }} />
+              Joined {moment(user.createdAt).fromNow()}
+            </span>
+          </div>
+
+          <div className="upi-stats">
+            <div>
+              <span className="upi-stat-num">{posts.length}</span>
+              <span className="upi-stat-label">Posts</span>
             </div>
-
-            <p className='text-gray-700 text-sm max-w-md mt-4'>
-                {user.bio}
-            </p>
-
-            <div className=' flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-gray-500 mt-4'>
-                    <span className='flex items-center gap-1.5 '>
-                        <MapPin className='w-4 h-4'/>
-                        {
-                            user.location ? user.location : 'Add Loaction'
-                        }
-                    </span>
-                    <span className='flex items-center gap-1.5 '>
-                        <Calendar className='w-4 h-4'/>
-                        Joined <span className='font-medium'>{moment(user.createdAt).fromNow()}</span>
-                    </span>
+            <div>
+              <span className="upi-stat-num">{user.followers.length}</span>
+              <span className="upi-stat-label">Followers</span>
             </div>
-
-            <div className='flex items-center gap-6 mt-6 border-t border-gray-200 pt-4'>
-                <div>
-                     <span className='sm:text-xl font-bold text-gray-900'>{posts.length}</span>
-                     <span className='text-xs sm:text-sm text-gray-500 ml-1'>Posts</span>
-                </div>
-
-                 <div>
-                     <span className='sm:text-xl font-bold text-gray-900'>{user.followers.length}</span>
-                     <span className='text-xs sm:text-sm text-gray-500 ml-1'>Followers</span>
-                </div>
-
-                 <div>
-                     <span className='sm:text-xl font-bold text-gray-900'>{user.following.length}</span>
-                     <span className='text-xs sm:text-sm text-gray-500 ml-1'>Following</span>
-                </div>
-
+            <div>
+              <span className="upi-stat-num">{user.following.length}</span>
+              <span className="upi-stat-label">Following</span>
             </div>
           </div>
         </div>
-    </div>
+      </div>
+    </>
   )
 }
 

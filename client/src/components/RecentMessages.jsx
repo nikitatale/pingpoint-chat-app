@@ -1,79 +1,141 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
-import moment from 'moment';
-import { useAuth, useUser } from '@clerk/clerk-react';
-import api from '../api/axios';
-import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom'
+import moment from 'moment'
+import { useAuth, useUser } from '@clerk/clerk-react'
+import api from '../api/axios'
+import toast from 'react-hot-toast'
 
 const RecentMessages = () => {
+  const [messages, setMessages] = useState([])
+  const { user } = useUser()
+  const { getToken } = useAuth()
 
-    const[messages, setMessages] = useState([]);
-    const {user} = useUser();
-    const {getToken} = useAuth();
-
-    const fetchRecentMessages = async () => {
-       try {
-        const token = await getToken()
-          const { data } = await api.get('/api/user/recent-messages', {
-            headers: {Authorization: `Bearer ${token}`}
-          })
-
-          if(data.success){
-            const groupedMessages = data.messages.reduce((acc, message) => {
-                const senderId = message.from_user_id._id ;
-                if(!acc[senderId] || new Date(message.createdAt) > new Date(acc[senderId].createdAt)){
-                  acc[senderId] = message
-                }
-                return acc;
-            }, {})
-       
-            const sortedMessages = Object.values(groupedMessages).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                 
-            setMessages(sortedMessages)
-          } else{
-             toast.error(data.message)
-          }
-        
-       } catch (error) {
-         toast.error(error.message)
-       }
+  const fetchRecentMessages = async () => {
+    try {
+      const token = await getToken()
+      const { data } = await api.get('/api/user/recent-messages', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      if (data.success) {
+        const grouped = data.messages.reduce((acc, msg) => {
+          const id = msg.from_user_id._id
+          if (!acc[id] || new Date(msg.createdAt) > new Date(acc[id].createdAt)) acc[id] = msg
+          return acc
+        }, {})
+        setMessages(Object.values(grouped).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)))
+      } else {
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
     }
+  }
 
   useEffect(() => {
-    if(user){
-         fetchRecentMessages();
-         setInterval(fetchRecentMessages, 3000);
-         return () => {clearInterval()}
+    if (user) {
+      fetchRecentMessages()
+      const interval = setInterval(fetchRecentMessages, 3000)
+      return () => clearInterval(interval)
     }
   }, [user])
 
   return (
-    <div className='bg-white max-w-xs mt-4 p-4 min-h-20 rounded-md shadow text-xs text-slate-800 '>
-        <h3 className='font-semibold text-slate-400 mb-4'>Recent Messages</h3>
-        <div className='flex flex-col max-h-56 overflow-y-scroll no-scrollbar'>
-                 {
-                    messages.map((message, index) => (
-                        <Link to={`/messages/${message.from_user_id._id}`} key={index} className='flex items-start gap-2 py-2 hover:bg-slate-100'>
-                         <img src={message.from_user_id.profile__picture} className='w-8 h-8 rounded-full' alt="message" />
-                         <div className='w-full'>
-                          <div className='flex justify-between'>
-                          <p className='font-medium'>{message.from_user_id.full_name}</p>
-                          <p className='text-[10px] text-slate-400'>{moment(message.createdAt).fromNow()}</p>
-                         </div>
+    <>
+      <style>{`
+        .rm-card {
+          background: rgba(15,23,42,0.8);
+          border: 1px solid rgba(99,102,241,0.15);
+          border-radius: 16px;
+          padding: 1rem;
+          width: 260px;
+          margin-top: 1rem;
+          backdrop-filter: blur(12px);
+        }
+        .rm-title {
+          font-size: 0.72rem;
+          font-weight: 600;
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          color: #475569;
+          margin-bottom: 0.8rem;
+        }
+        .rm-list {
+          display: flex;
+          flex-direction: column;
+          max-height: 320px;
+          overflow-y: auto;
+          gap: 2px;
+        }
+        .rm-list::-webkit-scrollbar { width: 3px; }
+        .rm-list::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.3); border-radius: 3px; }
 
-                         <div className='flex justify-between'>
-                          <p className='text-gray-500'>{message.text ?  message.text : 'Media'}</p>
-                          {
-                            !message.seen && <p className='bg-[#111B3D] text-white w-4 h-4 flex items-center justify-center rounded-full text-[10px]'>1</p>
-                          }
-                         </div>
-                         </div>
-                        </Link>
-                    ))
-                 }
+        .rm-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 8px;
+          border-radius: 10px;
+          text-decoration: none;
+          transition: background 0.2s;
+        }
+        .rm-item:hover { background: rgba(99,102,241,0.08); }
+
+        .rm-avatar {
+          width: 36px; height: 36px;
+          border-radius: 50%;
+          object-fit: cover;
+          border: 1.5px solid rgba(99,102,241,0.3);
+          flex-shrink: 0;
+        }
+        .rm-name { font-size: 0.8rem; font-weight: 600; color: #E2E8F0; }
+        .rm-time { font-size: 0.65rem; color: #475569; }
+        .rm-text { font-size: 0.75rem; color: #64748B; }
+        .rm-unseen {
+          width: 18px; height: 18px;
+          background: linear-gradient(135deg, #4F46E5, #2563EB);
+          color: white;
+          font-size: 0.6rem;
+          font-weight: 700;
+          border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          flex-shrink: 0;
+          box-shadow: 0 0 8px rgba(79,70,229,0.5);
+        }
+        .rm-empty {
+          font-size: 0.8rem;
+          color: #475569;
+          text-align: center;
+          padding: 1.5rem 0;
+        }
+      `}</style>
+
+      <div className="rm-card">
+        <p className="rm-title">Recent Messages</p>
+        <div className="rm-list">
+          {messages.length === 0 ? (
+            <p className="rm-empty">No messages yet</p>
+          ) : (
+            messages.map((msg, i) => (
+              <Link to={`/messages/${msg.from_user_id._id}`} key={i} className="rm-item">
+                <img src={msg.from_user_id.profile__picture} alt="avatar" className="rm-avatar" />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span className="rm-name">{msg.from_user_id.full_name}</span>
+                    <span className="rm-time">{moment(msg.createdAt).fromNow()}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span className="rm-text" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 130 }}>
+                      {msg.text || 'Media'}
+                    </span>
+                    {!msg.seen && <span className="rm-unseen">1</span>}
+                  </div>
+                </div>
+              </Link>
+            ))
+          )}
         </div>
-      
-    </div>
+      </div>
+    </>
   )
 }
 
