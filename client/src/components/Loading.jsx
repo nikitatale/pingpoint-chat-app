@@ -1,13 +1,18 @@
 import React from 'react'
 
-const Loading = ({height= '100vh'}) => {
+const Loading = ({ height = '100vh' }) => {
   return (
-    <div style={{height}} className='flex items-center justify-center h-screen'>
-       <div className='w-10 h-10 rounded-full border-3 border-[#111B3D] border-t-transparent animate-spin'>
-
-       </div>
+    <div style={{ height, background: '#050A1A' }} className='flex items-center justify-center'>
+      <div style={{
+        width: 40, height: 40, borderRadius: '50%',
+        border: '3px solid rgba(99,102,241,0.2)',
+        borderTop: '3px solid #6366F1',
+        animation: 'spin 0.8s linear infinite',
+        boxShadow: '0 0 15px rgba(99,102,241,0.3)',
+      }} />
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
-  ) 
+  )
 }
 
 export default Loading
