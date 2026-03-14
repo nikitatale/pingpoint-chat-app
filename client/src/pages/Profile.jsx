@@ -49,13 +49,14 @@ const Profile = () => {
     <>
       <style>{`
         .profile-page {
-          min-height: 100%;
+          height: 100%;
           background: #050A1A;
           padding: 1.5rem;
-          overflow-y: auto;
+          overflow-y: scroll;
           position: relative;
+          box-sizing: border-box;
         }
-      
+       
         .profile-page::before {
           content: '';
           position: fixed;
@@ -75,6 +76,7 @@ const Profile = () => {
           z-index: 1;
         }
 
+       
         .profile-card {
           background: rgba(15, 23, 42, 0.8);
           border: 1px solid rgba(99,102,241,0.15);
@@ -84,7 +86,7 @@ const Profile = () => {
           box-shadow: 0 0 40px rgba(0,0,0,0.4);
         }
 
-     
+      
         .cover-wrap {
           height: 160px;
           background: linear-gradient(135deg, #111B3D, #394b88);
@@ -101,7 +103,7 @@ const Profile = () => {
           background: linear-gradient(to bottom, transparent 60%, rgba(15,23,42,0.6));
         }
 
-    
+       
         .tab-bar {
           background: rgba(255,255,255,0.04);
           border: 1px solid rgba(99,102,241,0.15);
@@ -131,7 +133,7 @@ const Profile = () => {
         }
         .tab-btn:not(.active):hover { color: #A5B4FC; background: rgba(99,102,241,0.1); }
 
-     
+       
         .posts-section {
           margin-top: 1.5rem;
           padding: 0 1rem 1.5rem;
@@ -141,7 +143,7 @@ const Profile = () => {
           gap: 1.2rem;
         }
 
-       
+     
         .media-grid {
           display: flex;
           flex-wrap: wrap;
@@ -182,15 +184,17 @@ const Profile = () => {
         <div className="profile-inner">
           <div className="profile-card">
 
+           
             <div className="cover-wrap">
               {user.cover_photo && <img src={user.cover_photo} alt="cover" />}
             </div>
 
+         
             <div style={{ padding: '0 1rem' }}>
               <UserProfileInfo user={user} posts={posts} profileId={profileId} setShowEdit={setShowEdit} />
             </div>
 
-        
+          
             <div style={{ padding: '0 1rem' }}>
               <div className="tab-bar">
                 {["posts", "media", "likes"].map((tab) => (
@@ -205,7 +209,6 @@ const Profile = () => {
               </div>
             </div>
 
-          
             {activeTab === 'posts' && (
               <div className="posts-section">
                 {posts.length === 0 ? (

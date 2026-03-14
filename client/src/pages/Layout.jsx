@@ -13,7 +13,7 @@ const Layout = () => {
     <>
       <style>{`
         .layout-wrap { width: 100%; display: flex; height: 100vh; background: #050A1A; overflow: hidden; }
-        .layout-main { flex: 1; overflow: hidden; background: #050A1A; }
+        .layout-main { flex: 1; overflow-y: auto; overflow-x: hidden; background: #050A1A; height: 100vh; }
 
         .layout-menu-toggle {
           position: absolute; top: 12px; right: 12px; z-index: 100;
@@ -47,7 +47,7 @@ const Layout = () => {
       <div className="layout-wrap">
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-       
+      
         <div
           className={`sidebar-overlay ${sidebarOpen ? 'visible' : ''}`}
           onClick={() => setSidebarOpen(false)}
@@ -57,7 +57,7 @@ const Layout = () => {
           <Outlet />
         </div>
 
-        
+       
         <div
           className="layout-menu-toggle"
           onClick={() => setSidebarOpen(!sidebarOpen)}
