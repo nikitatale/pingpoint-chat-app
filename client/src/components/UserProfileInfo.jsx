@@ -13,20 +13,24 @@ const UserProfileInfo = ({ user, posts, profileId, setShowEdit }) => {
         }
         .upi-avatar-ring {
           position: absolute;
-          top: -52px; left: 1.5rem;
-          width: 96px; height: 96px;
+          top: -56px; left: 1.5rem;
+          width: 100px; height: 100px;
           border-radius: 50%;
-          border: 3px solid #0B1425;
+          border: 4px solid #0B1425;
           box-shadow: 0 0 0 2px rgba(99,102,241,0.5), 0 0 20px rgba(99,102,241,0.2);
           overflow: hidden;
           background: #1E293B;
-          z-index: 5;
+          z-index: 10;
         }
         .upi-avatar-ring img {
-          width: 100%; height: 100%;
-          object-fit: cover; border-radius: 50%;
+          width: 100px; height: 100px;
+          object-fit: cover;
+          border-radius: 50%;
+          display: block;
+          position: relative;
+          z-index: 11;
         }
-        .upi-body { padding-top: 3rem; }
+        .upi-body { padding-top: 3.5rem; }
         .upi-top {
           display: flex;
           flex-direction: column;
@@ -73,7 +77,7 @@ const UserProfileInfo = ({ user, posts, profileId, setShowEdit }) => {
       `}</style>
 
       <div className="upi-wrap">
-     
+      
         <div className="upi-avatar-ring">
           <img src={user.profile__picture} alt="avatar" />
         </div>
