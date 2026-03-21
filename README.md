@@ -11,7 +11,7 @@
 
 ## 🖼️ Demo Preview
 
-![PingPoint Preview](public/pingpoint_preview.png)
+![PingPoint Preview](public/pingpoint_preview.png) 
 
 ---
 
