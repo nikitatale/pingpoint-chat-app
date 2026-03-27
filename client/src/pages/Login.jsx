@@ -291,7 +291,7 @@ const Login = () => {
             </h1>
 
             <p className="subtext">
-              Real-time, seamless communication that brings your friends &amp; family closer — visually and instantly.
+              Real-time, seamless communication that brings your friends &amp; family closer - visually and instantly.
             </p>
 
             <div className="rating-row">
